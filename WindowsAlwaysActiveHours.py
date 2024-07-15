@@ -81,11 +81,13 @@ def sched_start(systray):
             sched.start()
         elif sched.state == STATE_PAUSED:
             sched.resume()
-    except SchedulerAlreadyRunningError:
-        print("scheduler already running!")
-        pass
+    #except SchedulerAlreadyRunningError:
+    #    print("scheduler already running!")
+    #    pass
     except RuntimeError:
         print("running under uWSGI with threads disabled")
+        pass
+    except:
         pass
 
 def sched_stop(systray):
@@ -99,7 +101,7 @@ def say_hello(systray):
 def shutdown_tray(systray):
     try:
         sched.shutdown(wait=True)
-    except "SchedulerNotRunningError":
+    except:
         pass
     while sched.state == STATE_RUNNING:
         time.sleep(2)
@@ -111,3 +113,4 @@ def shutdown_tray(systray):
 menu_options = (("Say Hello", None, say_hello),("Say Hello", None, say_hello),)
 systray = SysTrayIcon("icon.ico", hover_text, menu_options, on_quit=shutdown_tray)
 systray.start()
+sched_start()
