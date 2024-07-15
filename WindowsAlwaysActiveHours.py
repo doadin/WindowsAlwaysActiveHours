@@ -99,7 +99,7 @@ def say_hello(systray):
 def shutdown_tray(systray):
     try:
         sched.shutdown(wait=True)
-    except SchedulerNotRunningError:
+    except "SchedulerNotRunningError":
         pass
     while sched.state == STATE_RUNNING:
         time.sleep(2)
