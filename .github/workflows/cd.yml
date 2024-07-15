@@ -74,12 +74,12 @@ jobs:
       #  run: |
       #    makensis /Darch=${{ matrix.arch }} WindowsAlwaysActiveHours-win-installer.nsi
 
-      #- uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v4
       #  if: startsWith(github.ref, 'refs/tags/')
-      #  with:
-      #    name: WindowsAlwaysActiveHours-py${{ matrix.python }}-${{ matrix.arch }}
-      #    path: |
-      #        ${{ github.workspace }}/*.exe
+        with:
+          name: WindowsAlwaysActiveHours-py${{ matrix.python }}-${{ matrix.arch }}
+          path: |
+              ${{ github.workspace }}/freeze/*.exe
 
       #- name: Release
       #  uses: softprops/action-gh-release@v2
