@@ -67,7 +67,7 @@ jobs:
       - name: Freeze WindowsAlwaysActiveHours
         #if: startsWith(github.ref, 'refs/tags/')
         run: |
-          pyinstaller --log-level INFO --onefile --name WindowsAlwaysActiveHours --clean WindowsAlwaysActiveHours.py --distpath freeze
+          pyinstaller --log-level INFO --onefile --noconsole --icon=icon.ico --add-data="icon.ico" --name WindowsAlwaysActiveHours --clean WindowsAlwaysActiveHours.py --distpath freeze
 
       #- name: Make WindowsAlwaysActiveHours Installer
       #  if: startsWith(github.ref, 'refs/tags/')
