@@ -73,7 +73,8 @@ def timed_job():
 
 # Setup Schedule
 sched = BlockingScheduler()
-@sched.scheduled_job('interval', seconds=3600)
+#@sched.scheduled_job('interval', seconds=3600)
+sched.add_job(timed_job, 'interval', hours=1)
 def sched_start(systray):
     try:
         if sched.state == STATE_STOPPED:
