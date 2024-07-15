@@ -1,0 +1,91 @@
+name: Package
+
+on:
+  push:
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: "Enter a tag or commit to package"
+        default: ""
+
+permissions:
+  contents: write
+
+jobs:
+  windows_package:
+    runs-on: windows-2022
+    if: (github.event_name != 'pull_request' || contains(github.event.pull_request.labels.*.name, 'package'))
+    strategy:
+      matrix:
+        arch: [x64,x86]
+        python: ["3.12"]
+
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      # Checkout source to subdir to enable packaging any tag/commit
+      - name: Checkout source
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.inputs.ref }}
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python}}
+          architecture: ${{ matrix.arch }}
+          cache: pip
+
+      - name: Prepare pip
+        run: python -m pip install wheel
+
+      - name: Install Python dependencies
+        run: >
+          python -m pip install
+          pyinstaller
+          APScheduler
+          infi.systray
+
+      #- name: Find Version
+      #  if: startsWith(github.ref, 'refs/tags/')
+      #  run: |
+      #    $DoElvUIClientVersion = 'build_version = "${{  github.ref_name }}"'
+      #    $DoElvUIClientVersion > ${{ github.workspace }}\VERSION.tmp
+      #    Get-Content -Path ${{ github.workspace }}\VERSION.tmp | echo
+      #    $CDDoElvUIClientVersion = '"${{  github.ref_name }}"'
+      #    $CDDoElvUIClientVersion > '${{ github.workspace }}\CDVERSION.tmp'
+      #    Get-Content -Path ${{ github.workspace }}\CDVERSION.tmp | echo
+      #    python ${{ github.workspace }}\CD.py
+      #    python ${{ github.workspace }}\file_version_info.py
+
+      - name: Freeze WindowsAlwaysActiveHours
+        #if: startsWith(github.ref, 'refs/tags/')
+        run: |
+          pyinstaller --log-level INFO --onefile --noconsole --name WindowsAlwaysActiveHours --clean WindowsAlwaysActiveHours.py --distpath freeze
+
+      #- name: Make WindowsAlwaysActiveHours Installer
+      #  if: startsWith(github.ref, 'refs/tags/')
+      #  run: |
+      #    makensis /Darch=${{ matrix.arch }} WindowsAlwaysActiveHours-win-installer.nsi
+
+      #- uses: actions/upload-artifact@v4
+      #  if: startsWith(github.ref, 'refs/tags/')
+      #  with:
+      #    name: WindowsAlwaysActiveHours-py${{ matrix.python }}-${{ matrix.arch }}
+      #    path: |
+      #        ${{ github.workspace }}/*.exe
+
+      #- name: Release
+      #  uses: softprops/action-gh-release@v2
+      #  if: startsWith(github.ref, 'refs/tags/')
+      #  with:
+      #    name: ${{  github.ref_name }}
+      #    tag_name: ${{  github.ref_name }}
+      #    #files: "D:/a/WindowsAlwaysActiveHours/WindowsAlwaysActiveHours/*.exe"
+      #    files: "${{ github.workspace }}/*.exe"
