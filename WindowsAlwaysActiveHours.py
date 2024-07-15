@@ -105,7 +105,10 @@ def shutdown_tray(systray):
         pass
     while sched.state == STATE_RUNNING:
         time.sleep(2)
-    systray.shutdown()
+    try:
+        systray.shutdown()
+    except:
+        pass
     if sched.state == STATE_STOPPED:
         sys.exit()
 
@@ -113,4 +116,4 @@ def shutdown_tray(systray):
 menu_options = (("Say Hello", None, say_hello),("Say Hello", None, say_hello),)
 systray = SysTrayIcon("icon.ico", hover_text, menu_options, on_quit=shutdown_tray)
 systray.start()
-sched_start()
+sched_start(systray)
