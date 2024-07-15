@@ -109,8 +109,9 @@ def shutdown_tray(systray):
         systray.shutdown()
     except:
         pass
-    if sched.state == STATE_STOPPED:
-        sys.exit()
+    #if sched.state == STATE_STOPPED:
+    #    sys.exit()
+    sys.exit()
 
     
 menu_options = (("Say Hello", None, say_hello),("Say Hello", None, say_hello),)
