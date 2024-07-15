@@ -18,6 +18,8 @@ def timed_job():
     newEndHour = None
     if curHourString[0] == "0":
         curHour = int(curHourString[1])
+    else:
+        curHour = int(curHour)
     if curHour <= 13:
         newEndHour = curHour + 10
     elif curHour >= 14:
