@@ -38,7 +38,7 @@ def timed_job():
 
     try:
         # Set Active Hours to Current hour for start +10 hours for end
-        if (curHour and type(curHour) == "int") and (newEndHour and type(newEndHour) == "int") and (curHour <= 24 and curHour >=1) and (newEndHour <= 24 and newEndHour >=1):
+        if (type(curHour) == int) and (type(newEndHour) == int) and (curHour <= 24 and curHour >=1) and (newEndHour <= 24 and newEndHour >=1):
             soft = wrg.OpenKeyEx(location,r"SOFTWARE\\Microsoft\\WindowsUpdate\\UX\\Settings\\", access=wrg.KEY_WRITE) 
             wrg.SetValueEx(soft, "UserChoiceActiveHoursStart", 0, wrg.REG_DWORD, curHour) 
             wrg.SetValueEx(soft, "UserChoiceActiveHoursEnd", 0, wrg.REG_DWORD, newEndHour)
@@ -48,7 +48,13 @@ def timed_job():
             wrg.SetValueEx(soft, "SmartActiveHoursState", 0, wrg.REG_DWORD, 0)
             if soft:
                 wrg.CloseKey(soft)
+            print("Set Active Hour Start To: ", curHour, " Set Active Hour End To: ", newEndHour, " Set Ative Hours To Manual")
         else:
+            #print(curHour)
+            #print(newEndHour)
+            #print("type of curHour: ",type(curHour))
+            #print("type of newEndHour: ",type(newEndHour))
+            #print(type(curHour) == "int")
             print("Error getting curent hour or calculating end hour, not changing value!")
     except ValueError:
         if type(ucahs) == "tuple" and type(ucahs[0]) == "int":
@@ -111,10 +117,12 @@ def shutdown_tray(systray):
         pass
     #if sched.state == STATE_STOPPED:
     #    sys.exit()
-    sys.exit()
+    #sys.exit()
 
-    
-menu_options = (("Say Hello", None, say_hello),("Say Hello", None, say_hello),)
+
+#menu_options = (("Say Hello", None, say_hello),("Say Hello", None, say_hello),)
+menu_options = ()
 systray = SysTrayIcon("icon.ico", hover_text, menu_options, on_quit=shutdown_tray)
 systray.start()
+timed_job()
 sched_start(systray)
