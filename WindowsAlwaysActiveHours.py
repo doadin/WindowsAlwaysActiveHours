@@ -1,6 +1,5 @@
-import datetime
+from datetime import datetime, timedelta
 import time
-import sys
 import winreg as wrg 
 # pip install APScheduler
 from apscheduler.schedulers.blocking import BlockingScheduler
@@ -9,21 +8,29 @@ from apscheduler.schedulers.base import STATE_STOPPED,STATE_RUNNING,STATE_PAUSED
 from infi.systray import SysTrayIcon
 
 def timed_job():
-    #curTime = datetime.now()
-    #curHour = curTime.hour
-    #curMin = curTime.minute
-    curHour = time.strftime('%H') # %H = in 24 hour format %I = 12 hour format %p Locale’s equivalent of either AM or PM.
-    #curMin = time.strftime('%M')
-    curHourString = str(curHour)
-    newEndHour = None
-    if curHourString[0] == "0":
-        curHour = int(curHourString[1])
-    else:
-        curHour = int(curHour)
-    if curHour <= 13:
-        newEndHour = curHour + 10
-    elif curHour >= 14:
-        newEndHour = curHour - 10
+
+    try:
+        current_time = datetime.now()
+        curHour = current_time.strftime('%H')
+        curHourString = str(curHour)
+        if curHourString and curHourString[0] == "0":
+            curHour = int(curHourString[1])
+        else:
+            curHour = int(curHour)
+        new_time = current_time + timedelta(hours=18)
+        newEndHour = new_time.strftime('%H')
+        newEndHourString = str(curHour)
+        if newEndHourString and newEndHourString[0] == "0":
+            newEndHour = int(newEndHourString[1])
+        else:
+            newEndHour = int(newEndHour)
+        curMILTime = time.strptime(curHourString + ":00", "%H:%M")
+        curAMPMTime = time.strftime("%I:%M %p", curMILTime)
+        newEndMILTime = time.strptime(str(newEndHour) + ":00", "%H:%M")
+        newEndAMPMTime = time.strftime("%I:%M %p", newEndMILTime)
+    except ValueError:
+        print("Error Formingting time for prints")
+        pass
     # Store location of HKEY_CURRENT_USER 
     location = wrg.HKEY_LOCAL_MACHINE
     # Storing path in soft 
