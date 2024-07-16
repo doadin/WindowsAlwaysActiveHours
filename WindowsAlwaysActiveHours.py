@@ -28,7 +28,11 @@ def timed_job():
     location = wrg.HKEY_LOCAL_MACHINE
     # Storing path in soft 
     # SOFTWARE\Microsoft\WindowsUpdate\UX\Settings
-    soft = wrg.OpenKeyEx(location,r"SOFTWARE\\Microsoft\\WindowsUpdate\\UX\\Settings\\", access=wrg.KEY_READ) 
+    try:
+        soft = wrg.OpenKeyEx(location,r"SOFTWARE\\Microsoft\\WindowsUpdate\\UX\\Settings\\", access=wrg.KEY_READ)
+    except OSError:
+        print("Error Opening Windows Update Settings Registry Key")
+        pass
     # Get Current Values As A BackUp
     ucahs = wrg.QueryValueEx(soft,"UserChoiceActiveHoursStart") 
     ucahe = wrg.QueryValueEx(soft,"UserChoiceActiveHoursEnd") 
@@ -40,7 +44,7 @@ def timed_job():
 
     try:
         # Set Active Hours to Current hour for start +10 hours for end
-        if (type(curHour) == int) and (type(newEndHour) == int) and (curHour <= 24 and curHour >=1) and (newEndHour <= 24 and newEndHour >=1):
+        if (type(curHour) == int) and (type(newEndHour) == int) and (curHour <= 24 and curHour >=0) and (newEndHour <= 24 and newEndHour >=0):
             soft = wrg.OpenKeyEx(location,r"SOFTWARE\\Microsoft\\WindowsUpdate\\UX\\Settings\\", access=wrg.KEY_WRITE) 
             wrg.SetValueEx(soft, "UserChoiceActiveHoursStart", 0, wrg.REG_DWORD, curHour) 
             wrg.SetValueEx(soft, "UserChoiceActiveHoursEnd", 0, wrg.REG_DWORD, newEndHour)
@@ -50,7 +54,8 @@ def timed_job():
             wrg.SetValueEx(soft, "SmartActiveHoursState", 0, wrg.REG_DWORD, 0)
             if soft:
                 wrg.CloseKey(soft)
-            print("Set Active Hour Start To: ", curHour, " Set Active Hour End To: ", newEndHour, " Set Ative Hours To Manual")
+            print("Set Active Hour Start To: ", str(curHour) + ":00", " Set Active Hour End To: ", str(newEndHour) + ":00", " Set Ative Hours To Manual")
+            print("Start Time Set To: ", curAMPMTime, "End Time Set To: ", newEndAMPMTime)
         else:
             #print(curHour)
             #print(newEndHour)
