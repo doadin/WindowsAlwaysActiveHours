@@ -80,7 +80,7 @@ def timed_job():
         print(f"Unexpected {err=}, {type(err)=}")
 
 # Setup Schedule
-sched = BlockingScheduler()
+sched = BlockingScheduler(job_defaults={'misfire_grace_time': 15*60})
 #@sched.scheduled_job('interval', seconds=3600)
 sched.add_job(timed_job, 'interval', hours=1)
 def sched_start(systray):
